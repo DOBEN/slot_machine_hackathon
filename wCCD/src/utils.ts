@@ -11,6 +11,52 @@ export const CONTRACT_NAME_STATE = 'CIS2-wCCD-State';
  * Action for wrapping some CCD to WCCD in the WCCD smart contract instance
  */
 
+ export const reveal = (
+    account: string,
+    index: bigint,
+    setHash: (x: string) => void,
+    setError: (x: string) => void,
+    setWaitForUser: (x: boolean) => void,
+    subindex = 0n,
+    amount = 0
+) => {
+    if (!Number.isInteger(amount) || amount <= 0) {
+        setWaitForUser(false);
+        return;
+    }
+
+    detectConcordiumProvider()
+        .then((provider) => {
+            provider
+                .sendTransaction(
+                    account,
+                    AccountTransactionType.UpdateSmartContractInstance,
+                    {
+                        amount: new GtuAmount(BigInt(0)),
+                        contractAddress: {
+                            index,
+                            subindex,
+                        },
+                        receiveName: `${CONTRACT_NAME}.receive_payout`,
+                        maxContractExecutionEnergy: 30000n,
+                        parameter: toBuffer(''),
+                    },
+                    {},
+                    ''
+              ) .then((txHash) => {
+                    setHash(txHash);
+                    setWaitForUser(false);
+                })
+                .catch((err) => {
+                    setError(err);
+                    setWaitForUser(false);
+                });
+        })
+        .catch(() => {
+            throw new Error('Concordium Wallet API not accessible');
+        });
+};
+
 export const wrap = (
     account: string,
     index: bigint,

@@ -3,7 +3,7 @@ import React, { useEffect, useState, useContext, useRef, useCallback } from 'rea
 import { toBuffer, AccountAddress } from '@concordium/web-sdk';
 import { detectConcordiumProvider } from '@concordium/browser-wallet-api-helpers';
 import * as leb from '@thi.ng/leb128';
-import { wrap, unwrap, state, CONTRACT_NAME_PROXY, CONTRACT_NAME_IMPLEMENTATION, CONTRACT_NAME_STATE } from './utils';
+import { wrap, reveal, unwrap, state, CONTRACT_NAME_PROXY, CONTRACT_NAME_IMPLEMENTATION, CONTRACT_NAME_STATE } from './utils';
 
 import ArrowIcon from './assets/Arrow.svg';
 import RefreshIcon from './assets/Refresh.svg';
@@ -99,7 +99,7 @@ export default function wCCD({ handleGetAccount }: Props) {
     const { account, isConnected } = useContext(state);
     const [ownerProxy, setOwnerProxy] = useState<string>();
     const [ownerImplementation, setOwnerImplementation] = useState<string>();
-    const [isWrapping, setIsWrapping] = useState<boolean>(true);
+    const [isActiveGame, setIsActiveGame] = useState<boolean>(false);
     const [hash, setHash] = useState<string>('');
     const [error, setError] = useState<string>('');
     const [flipped, setflipped] = useState<boolean>(false);
@@ -267,22 +267,39 @@ export default function wCCD({ handleGetAccount }: Props) {
                                 const amount = 1000000;
 
                                 if (account) {
-                                    setHash('');
-                                    setError('');
-                                    setWaitForUser(true);
-                                    wrap(
-                                        account,
-                                        1081n, // slot machine contract
-                                        setHash,
-                                        setError,
-                                        setWaitForUser,
-                                        CONTRACT_SUB_INDEX,
-                                        amount
-                                    );
+                                    if (!isActiveGame) {
+                                        setIsActiveGame(!isActiveGame)
+                                        setHash('');
+                                        setError('');
+                                        setWaitForUser(true);
+                                        wrap(
+                                            account,
+                                            1081n, // slot machine contract
+                                            setHash,
+                                            setError,
+                                            setWaitForUser,
+                                            CONTRACT_SUB_INDEX,
+                                            amount
+                                        );
+                                    }
+                                    else {
+                                        setHash('');
+                                        setError('');
+                                        setWaitForUser(true);
+                                        reveal(
+                                            account,
+                                            1085n, // slot machine contract
+                                            setHash,
+                                            setError,
+                                            setWaitForUser,
+                                            CONTRACT_SUB_INDEX,
+                                            amount
+                                        );
+                                    }
                                 }
                             }}
                         >
-                            {isWrapping ? 'Play' : 'Play'}
+                            {isActiveGame ? 'Reveal' : 'Play'}
                         </button>
                     )}
                 </label>
