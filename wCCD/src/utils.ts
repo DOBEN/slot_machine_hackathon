@@ -3,7 +3,7 @@ import { createContext } from 'react';
 import { detectConcordiumProvider } from '@concordium/browser-wallet-api-helpers';
 import { AccountTransactionType, GtuAmount, toBuffer } from '@concordium/web-sdk';
 
-export const CONTRACT_NAME_PROXY = 'CIS2-wCCD-Proxy';
+export const CONTRACT_NAME = 'SlotMachine';
 export const CONTRACT_NAME_IMPLEMENTATION = 'CIS2-wCCD';
 export const CONTRACT_NAME_STATE = 'CIS2-wCCD-State';
 
@@ -37,19 +37,13 @@ export const wrap = (
                             index,
                             subindex,
                         },
-                        receiveName: `${CONTRACT_NAME_PROXY}.wrap`,
+                        receiveName: `${CONTRACT_NAME}.insert`,
                         maxContractExecutionEnergy: 30000n,
                         parameter: toBuffer(''),
                     },
-                    {
-                        data: '',
-                        to: {
-                            Account: [account],
-                        },
-                    },
-                    '//8BAQAAAA8AAABDSVMyLXdDQ0QtUHJveHkBABQAAgAAABYAAABpbXBsZW1lbnRhdGlvbl9hZGRyZXNzDA0AAABzdGF0ZV9hZGRyZXNzDAEAAAAEAAAAd3JhcAAUAAIAAAACAAAAdG8VAgAAAAcAAABBY2NvdW50AQEAAAALCAAAAENvbnRyYWN0AQIAAAAMFgEEAAAAZGF0YR0B'
-                )
-                .then((txHash) => {
+                    {},
+                    ''
+              ) .then((txHash) => {
                     setHash(txHash);
                     setWaitForUser(false);
                 })

@@ -76,7 +76,7 @@ async function updateStateWCCDBalanceAccount(account: string, setAmountAccount: 
     });
 
     // Adding '00' because enum 0 (an `Account`) was selected instead of enum 1 (an `ContractAddress`).
-    const inputParams = toBuffer(`00${hexString}`, 'hex');
+ /*   const inputParams = toBuffer(`00${hexString}`, 'hex');
     const provider = await detectConcordiumProvider();
     const res = await provider.getJsonRpcClient().invokeContract({
         method: `${CONTRACT_NAME_STATE}.getBalance`,
@@ -87,7 +87,7 @@ async function updateStateWCCDBalanceAccount(account: string, setAmountAccount: 
         throw new Error(`Expected succesful invocation`);
     }
 
-    setAmountAccount(BigInt(leb.decodeULEB128(toBuffer(res.returnValue, 'hex'))[0]));
+    setAmountAccount(BigInt(leb.decodeULEB128(toBuffer(res.returnValue, 'hex'))[0]));*/
 }
 
 interface Props {
@@ -107,7 +107,7 @@ export default function wCCD({ handleGetAccount }: Props) {
     const inputValue = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        if (isConnected) {
+       /* if (isConnected) {
             // Get wCCD proxy contract owner.
             detectConcordiumProvider()
                 .then((provider) =>
@@ -145,7 +145,7 @@ export default function wCCD({ handleGetAccount }: Props) {
             if (account) {
                 updateStateWCCDBalanceAccount(account, setAmountAccount);
             }
-        }
+        }*/
     }, [isConnected]);
 
     const handleOnClick = useCallback(() => {
@@ -225,33 +225,7 @@ export default function wCCD({ handleGetAccount }: Props) {
                     </button>
                 </div>
                 <br />
-                <div className="containerSwitch">
-                    <div className="largeText">CCD &nbsp; &nbsp; </div>
-                    <button className="switch" type="button" onClick={() => setIsWrapping(!isWrapping)}>
-                        {isWrapping ? (
-                            <ArrowIcon
-                                style={{ padding: '2px 2px 0px 0px', borderRadius: '5' }}
-                                height="20px"
-                                width="20px"
-                            />
-                        ) : (
-                            <ArrowIcon
-                                style={{ padding: '2px 2px 0px 0px', borderRadius: '5', transform: 'scaleX(-1)' }}
-                                height="20px"
-                                width="20px"
-                            />
-                        )}
-                    </button>
-                    <div className="largeText">&nbsp; &nbsp; wCCD</div>
-                </div>
                 <label>
-                    <input
-                        className="input"
-                        style={InputFieldStyle}
-                        type="number"
-                        placeholder="0.00"
-                        ref={inputValue}
-                    />
                     {waitForUser || !isConnected ? (
                         <button style={ButtonStyleDisabled} type="button" disabled>
                             Waiting for user
@@ -262,56 +236,27 @@ export default function wCCD({ handleGetAccount }: Props) {
                             type="button"
                             disabled={account === undefined}
                             onClick={() => {
-                                if (
-                                    inputValue.current === undefined ||
-                                    inputValue.current?.valueAsNumber === undefined
-                                ) {
-                                    /* eslint-disable no-alert */
-                                    window.alert(
-                                        'Input a number into the CCD/wCCD amount field with max 6 decimal places.'
-                                    );
-                                    return;
-                                }
 
-                                const input = inputValue.current?.valueAsNumber;
                                 // Amount needs to be in WEI
-                                const amount = input * 1000000;
-
-                                if (!Number.isInteger(amount)) {
-                                    window.alert(
-                                        'Input a number into the CCD/wCCD amount field with max 6 decimal places.'
-                                    ); /* eslint-disable no-alert */
-                                }
+                                const amount = 1000000;
 
                                 if (account) {
                                     setHash('');
                                     setError('');
                                     setWaitForUser(true);
-                                    if (isWrapping) {
-                                        wrap(
-                                            account,
-                                            WCCD_PROXY_INDEX,
-                                            setHash,
-                                            setError,
-                                            setWaitForUser,
-                                            CONTRACT_SUB_INDEX,
-                                            amount
-                                        );
-                                    } else {
-                                        unwrap(
-                                            account,
-                                            WCCD_PROXY_INDEX,
-                                            setHash,
-                                            setError,
-                                            setWaitForUser,
-                                            CONTRACT_SUB_INDEX,
-                                            amount
-                                        );
-                                    }
+                                    wrap(
+                                        account,
+                                        1081n, // slot machine contract
+                                        setHash,
+                                        setError,
+                                        setWaitForUser,
+                                        CONTRACT_SUB_INDEX,
+                                        amount
+                                    );
                                 }
                             }}
                         >
-                            {isWrapping ? 'Wrap' : 'Unwrap'}
+                            {isWrapping ? 'Play' : 'Play'}
                         </button>
                     )}
                 </label>
