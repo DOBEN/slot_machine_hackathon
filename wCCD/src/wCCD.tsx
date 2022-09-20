@@ -22,13 +22,14 @@ const WCCD_STATE_INDEX = 864n;
 const CONTRACT_SUB_INDEX = 0n;
 
 const blackCardStyle = {
-    backgroundColor: 'black',
+
+    backgroundColor: 'transparent',
     color: 'white',
-    width: '484px',
+    width: '545px',
     borderRadius: 10,
-    margin: '10px 0px 10px 0px',
-    padding: '10px 18px',
-    border: '1px solid #308274',
+    margin: '10px 0px 0px 0px',
+    padding: '10px 18px 0px 18px',
+    border: '0px solid #308274',
 };
 
 const ButtonStyle = {
@@ -76,18 +77,18 @@ async function updateStateWCCDBalanceAccount(account: string, setAmountAccount: 
     });
 
     // Adding '00' because enum 0 (an `Account`) was selected instead of enum 1 (an `ContractAddress`).
- /*   const inputParams = toBuffer(`00${hexString}`, 'hex');
-    const provider = await detectConcordiumProvider();
-    const res = await provider.getJsonRpcClient().invokeContract({
-        method: `${CONTRACT_NAME_STATE}.getBalance`,
-        contract: { index: WCCD_STATE_INDEX, subindex: CONTRACT_SUB_INDEX },
-        parameter: inputParams,
-    });
-    if (!res || res.tag === 'failure' || !res.returnValue) {
-        throw new Error(`Expected succesful invocation`);
-    }
-
-    setAmountAccount(BigInt(leb.decodeULEB128(toBuffer(res.returnValue, 'hex'))[0]));*/
+    /*   const inputParams = toBuffer(`00${hexString}`, 'hex');
+       const provider = await detectConcordiumProvider();
+       const res = await provider.getJsonRpcClient().invokeContract({
+           method: `${CONTRACT_NAME_STATE}.getBalance`,
+           contract: { index: WCCD_STATE_INDEX, subindex: CONTRACT_SUB_INDEX },
+           parameter: inputParams,
+       });
+       if (!res || res.tag === 'failure' || !res.returnValue) {
+           throw new Error(`Expected succesful invocation`);
+       }
+   
+       setAmountAccount(BigInt(leb.decodeULEB128(toBuffer(res.returnValue, 'hex'))[0]));*/
 }
 
 interface Props {
@@ -107,45 +108,45 @@ export default function wCCD({ handleGetAccount }: Props) {
     const inputValue = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-       /* if (isConnected) {
-            // Get wCCD proxy contract owner.
-            detectConcordiumProvider()
-                .then((provider) =>
-                    provider
-                        .getJsonRpcClient()
-                        .getInstanceInfo({ index: WCCD_PROXY_INDEX, subindex: CONTRACT_SUB_INDEX })
-                )
-                .then((info) => {
-                    if (info?.name !== `init_${CONTRACT_NAME_PROXY}`) {
-                        // Check that we have the expected instance.
-                        throw new Error(`Expected instance of proxy: ${info?.name}`);
-                    }
-
-                    setOwnerProxy(info.owner.address);
-                });
-
-            // Get wCCD implementation contract owner.
-            detectConcordiumProvider()
-                .then((provider) =>
-                    provider
-                        .getJsonRpcClient()
-                        .getInstanceInfo({ index: WCCD_IMPLEMENTATION_INDEX, subindex: CONTRACT_SUB_INDEX })
-                )
-                .then((info) => {
-                    if (info?.name !== `init_${CONTRACT_NAME_IMPLEMENTATION}`) {
-                        // Check that we have the expected instance.
-                        throw new Error(`Expected instance of implementation: ${info?.name}`);
-                    }
-
-                    setOwnerImplementation(info.owner.address);
-                });
-        }
-
-        if (isConnected) {
-            if (account) {
-                updateStateWCCDBalanceAccount(account, setAmountAccount);
-            }
-        }*/
+        /* if (isConnected) {
+             // Get wCCD proxy contract owner.
+             detectConcordiumProvider()
+                 .then((provider) =>
+                     provider
+                         .getJsonRpcClient()
+                         .getInstanceInfo({ index: WCCD_PROXY_INDEX, subindex: CONTRACT_SUB_INDEX })
+                 )
+                 .then((info) => {
+                     if (info?.name !== `init_${CONTRACT_NAME_PROXY}`) {
+                         // Check that we have the expected instance.
+                         throw new Error(`Expected instance of proxy: ${info?.name}`);
+                     }
+ 
+                     setOwnerProxy(info.owner.address);
+                 });
+ 
+             // Get wCCD implementation contract owner.
+             detectConcordiumProvider()
+                 .then((provider) =>
+                     provider
+                         .getJsonRpcClient()
+                         .getInstanceInfo({ index: WCCD_IMPLEMENTATION_INDEX, subindex: CONTRACT_SUB_INDEX })
+                 )
+                 .then((info) => {
+                     if (info?.name !== `init_${CONTRACT_NAME_IMPLEMENTATION}`) {
+                         // Check that we have the expected instance.
+                         throw new Error(`Expected instance of implementation: ${info?.name}`);
+                     }
+ 
+                     setOwnerImplementation(info.owner.address);
+                 });
+         }
+ 
+         if (isConnected) {
+             if (account) {
+                 updateStateWCCDBalanceAccount(account, setAmountAccount);
+             }
+         }*/
     }, [isConnected]);
 
     const handleOnClick = useCallback(() => {
@@ -170,8 +171,20 @@ export default function wCCD({ handleGetAccount }: Props) {
 
     return (
         <>
-            <h1 className="header">CCD &lt;-&gt; WCCD Smart Contract</h1>
-            <h3>Wrap and unwrap your CCDs and wCCDs on the Concordium Testnet</h3>
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
             <div style={blackCardStyle}>
                 <div>
                     {!isConnected && waitForUser && (
@@ -203,27 +216,40 @@ export default function wCCD({ handleGetAccount }: Props) {
                         </>
                     )}
                 </div>
+                <div>Transaction status{hash === '' ? '' : ' (May take a moment to finalize)'}</div>
+                {hash === '' && error !== '' && <div style={{ color: 'red' }}>Transaction rejected by wallet.</div>}
+                {hash === '' && error === '' && <div className="loadingText">Waiting for transaction...</div>}
+                {hash !== '' && (
+                    <>
+                        <button
+                            className="link"
+                            type="button"
+                            onClick={() => {
+                                window.open(
+                                    `https://testnet.ccdscan.io/?dcount=1&dentity=transaction&dhash=${hash}`,
+                                    '_blank',
+                                    'noopener,noreferrer'
+                                );
+                            }}
+                        >
+                            {' '}
+                            {hash}{' '}
+                        </button>
+                        <br />
+                    </>
+                )}
                 <br />
-                <div className="text">wCCD Balance of connected account</div>
-                <div className="containerSpaceBetween">
-                    <div className="largeText">{Number(amountAccount) / 1000000}</div>
-                    <button
-                        className="buttonInvisible"
-                        type="button"
-                        onClick={() => {
-                            setflipped(!flipped);
-                            if (account) {
-                                updateStateWCCDBalanceAccount(account, setAmountAccount);
-                            }
-                        }}
-                    >
-                        {flipped ? (
-                            <RefreshIcon style={{ transform: 'rotate(90deg)' }} height="20px" width="20px" />
-                        ) : (
-                            <RefreshIcon height="20px" width="20px" />
-                        )}
-                    </button>
-                </div>
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
                 <br />
                 <label>
                     {waitForUser || !isConnected ? (
@@ -260,85 +286,9 @@ export default function wCCD({ handleGetAccount }: Props) {
                         </button>
                     )}
                 </label>
-                <br />
-                <br />
-                <div>Transaction status{hash === '' ? '' : ' (May take a moment to finalize)'}</div>
-                {hash === '' && error !== '' && <div style={{ color: 'red' }}>Transaction rejected by wallet.</div>}
-                {hash === '' && error === '' && <div className="loadingText">Waiting for transaction...</div>}
-                {hash !== '' && (
-                    <>
-                        <button
-                            className="link"
-                            type="button"
-                            onClick={() => {
-                                window.open(
-                                    `https://testnet.ccdscan.io/?dcount=1&dentity=transaction&dhash=${hash}`,
-                                    '_blank',
-                                    'noopener,noreferrer'
-                                );
-                            }}
-                        >
-                            {' '}
-                            {hash}{' '}
-                        </button>
-                        <br />
-                    </>
-                )}
-                <br />
-                <div>
-                    Proxy wCCD owned by
-                    <br />
-                    {ownerProxy === undefined ? (
-                        <div className="loadingText">Loading...</div>
-                    ) : (
-                        <button
-                            className="link"
-                            type="button"
-                            onClick={() => {
-                                window.open(
-                                    `https://testnet.ccdscan.io/?dcount=1&dentity=account&daddress=${ownerProxy}`,
-                                    '_blank',
-                                    'noopener,noreferrer'
-                                );
-                            }}
-                        >
-                            {' '}
-                            {ownerProxy}{' '}
-                        </button>
-                    )}
-                </div>
-                <div>
-                    Implementation wCCD owned by
-                    <br />
-                    {ownerImplementation === undefined ? (
-                        <div className="loadingText">Loading...</div>
-                    ) : (
-                        <button
-                            className="link"
-                            type="button"
-                            onClick={() => {
-                                window.open(
-                                    `https://testnet.ccdscan.io/?dcount=1&dentity=account&daddress=${ownerImplementation}`,
-                                    '_blank',
-                                    'noopener,noreferrer'
-                                );
-                            }}
-                        >
-                            {' '}
-                            {ownerImplementation}{' '}
-                        </button>
-                    )}
-                </div>
-                <br />
-                <a
-                    style={{ color: 'white' }}
-                    href="https://developer.concordium.software/en/mainnet/smart-contracts/tutorials/wCCD/index.html"
-                    target="_blank"
-                    rel="noreferrer"
-                >
-                    You can read more about how to make a wrapper like this here.
-                </a>
+
             </div>
+
         </>
     );
 }
